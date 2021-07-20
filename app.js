@@ -24,11 +24,12 @@ form.addEventListener('submit', (e) => {
     const searchTerm = search.value;
     //selectedGenre=[];
     //setGenre();
-    if(searchTerm) {
-        getMovies(searchURL+'&query='+searchTerm)
-    }else{
-        getMovies(API_URL);
-    }
+//     if(searchTerm) {
+//         getMovies(searchURL+'&query='+searchTerm)
+//     }else{
+//         getMovies(API_URL);
+//     }
+    return searchTerm ? getMovies(searchURL+'&query='+searchTerm) : getMovies(API_URL)
 })
 
 
@@ -44,21 +45,32 @@ function setGenre() {
         t.id=genre.id;
         t.innerText = genre.name;
         t.addEventListener('click', () => {
-            if(selectedGenre.length == 0){
-                selectedGenre.push(genre.id);
-            }else{
-                if(selectedGenre.includes(genre.id)){
-                    selectedGenre.forEach((id, indx) => {
-                        if(id == genre.id){
-                            selectedGenre.splice(indx, 1);
-                        }
-                    })
-                }else{
-                    selectedGenre.push(genre.id);
-                }
-            }
-            console.log(selectedGenre)
-            getMovies(current_url + '&with_genres='+encodeURI(selectedGenre.join(',')))
+           let filteredGeners = [] 
+           if(selectedGenre.includes(genre.id)){
+                filteredGeners = selectedGenre.filter(id => id !== genre.id) 
+           }
+           else{
+               filteredGeners.push(genre.id)
+           }
+            
+            
+            
+            
+//             if(selectedGenre.length == 0){
+//                 selectedGenre.push(genre.id);
+//             }else{
+//                 if(selectedGenre.includes(genre.id)){
+//                     selectedGenre.forEach((id, indx) => {
+//                         if(id == genre.id){
+//                             selectedGenre.splice(indx, 1);
+//                         }
+//                     })
+//                 }else{
+//                     selectedGenre.push(genre.id);
+//                 }
+//             }
+            console.log(selectedGenre, filteredGeners)
+            getMovies(current_url + '&with_genres='+encodeURI(filteredGeners.join(',')))
             highlightSelection()
         })
         tagsEl.append(t);
@@ -80,12 +92,11 @@ function highlightSelection() {
     }
 }
 function clearBtn(){
-  let clearBtn = document.getElementById('clear');
+  const clearBtn = document.getElementById('clear');
   if(clearBtn){
-      clearBtn.classList.add('highlight')
-  }else{
-          
-      let clear = document.createElement('div');
+      return clearBtn.classList.add('highlight')
+  }
+  let clear = document.createElement('div');
       clear.classList.add('tag','highlight');
       clear.id = 'clear';
       clear.innerText = 'Clear x';
@@ -94,8 +105,7 @@ function clearBtn(){
           setGenre();            
           getMovies(current_url);
       })
-      tagsEl.append(clear);
-  }
+      tagsEl.append(clear);  
   
 } 
 
@@ -141,18 +151,23 @@ function getMovies(url) {
         console.log(data.results)
         
         if(data.results.length !== 0){
-            showMovies(data.results);
+            return showMovies(data.results);
             //tagsEl.scrollIntoView({behavior : 'smooth'})
 
-        }else{
-            main.innerHTML= `<h1 class="no-results">No Results Found</h1>`
         }
+        return main.innerHTML= `<h1 class="no-results">No Results Found</h1>`
     })
 }
 
 
 //rating
 function getColor(vote) {
+    
+//   switch vote
+//       case vote >= 8:
+      
+    
+    
   if(vote>= 8){
       return 'green'
   }else if(vote >= 5){
